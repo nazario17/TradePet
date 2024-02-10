@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup</title>
+
+</head>
+<body>
+
+<section class="container forms show-signup">
+    <div class="form signup">
+        <div class="form-content">
+            <header>Signup</header>
+
+            <form th:action="@{/signup}" method="post">
+                <p th:text="${error}" style="color: red">Текст за замовчуванням</p>
+                <input type="text" name="username" placeholder="Username" required>
+                <input type="email" name="email" placeholder="Email" required>
+                <input type="password" name="password" placeholder="Create password" required>
+                <input type="password" name="cPassword" placeholder="Confirm password" required>
+
+                <div>
+                    <button type="submit">Sign up</button>
+                </div>
+                <!--<div>
+                    <button type="button" onclick="window.location.href='/forgot'">Забули пароль?</button>
+                </div>-->
+
+            </form>
+            <!--<div class="form-link">
+                <span>Already have an account? <a href="/login" class="link login-link">Login</a></span>
+            </div>-->
+        </div>
+    </div>
+</section>
+</body>
+</html>
