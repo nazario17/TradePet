@@ -1,8 +1,9 @@
 package com.example.trade.model;
 
-import jakarta.persistence.*;
+
 import lombok.Data;
 
+import javax.persistence.*;
 import java.util.Set;
 
 @Entity
@@ -23,7 +24,7 @@ public class User {
     @Column
     private boolean active;
 
-    @ElementCollection(targetClass = ROLE.class, fetch = FetchType.EAGER)
+    @ElementCollection(targetClass = ROLE.class, fetch = FetchType.LAZY)
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_name"))
     @Enumerated(EnumType.STRING)
     private Set<ROLE> roles;

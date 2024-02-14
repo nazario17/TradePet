@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Users</title>
+</head>
+<body>
+<div>
+    <table>
+        <tr th:each="roles : ${role}">
+            <div class="user-details">
+                <h3 class="username" th:text="${role}">role</h3>
+            </div>
+            <hr>
+        </tr>
+        <tr th:text="${name}"> </tr>
+    </table>
+</div>
+</body>
+</html>

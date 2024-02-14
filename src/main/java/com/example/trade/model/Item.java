@@ -1,7 +1,7 @@
 package com.example.trade.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import javax.persistence.*;
+
 import lombok.Data;
 
 @Entity

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Users</title>
+</head>
+<body>
+<div>
+    <table>
+        <tr th:each="user : ${users}">
+            <div class="user-details">
+                <h3 class="username" th:text="${user.getUsername()}">Username</h3>
+                <h3 class="email" th:text="${user.getEmail()}">Email</h3>
+                <h3 class="balance" th:text="${user.getBalance()}">Balance</h3>
+                <a th:href="${user.getUsername()}">
+                    <button type="button" class="btn btn-danger">Make user an admin</button>
+                </a>
+
+            </div>
+            <hr>
+        </tr>
+    </table>
+</div>
+</body>
+</html>
