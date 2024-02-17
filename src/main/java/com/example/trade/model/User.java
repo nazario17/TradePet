@@ -2,6 +2,7 @@ package com.example.trade.model;
 
 
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -20,6 +21,10 @@ public class User {
 
     @Column(nullable = false)
     private String email;
+
+    @Lob
+    private byte[] image;
+    //todo додавання функціоналу зміни аватару користувача
 
     @Column
     private boolean active;

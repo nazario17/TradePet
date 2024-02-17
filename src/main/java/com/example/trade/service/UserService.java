@@ -32,16 +32,18 @@ public class UserService {
         return userRepository.getByUsername(username);
     }
 
-    public List<AuthorizedUser> getAllUsers(){
+    public List<AuthorizedUser> getAllAuthorizedUsers(){
         return userRepository
                 .findAll()
                 .stream()
-                .filter(AuthorizedUser.class::isInstance)
-                .map(user -> (AuthorizedUser)user)
+                .filter(user -> user.getClass().equals(AuthorizedUser.class))
+                .map(user -> (AuthorizedUser) user)
                 .collect(Collectors.toList());
     }
 
-    public void save(User user){
+
+
+    public void save(AuthorizedUser user){
         User temp = userRepository.getByUsername(user.getUsername());
         if (temp!=null) {
             userRepository.delete(userRepository.getByUsername(user.getUsername()));
