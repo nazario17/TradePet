@@ -4,6 +4,7 @@ import javax.persistence.*;
 
 import lombok.Data;
 
+
 @Entity
 @Data
 public class Item{
@@ -24,8 +25,12 @@ public class Item{
     @Column
     private String quality;
 
+    //todo maybe...
+/*
     @Column
     private Long quantity = 0L;
+*/
+
 
     @ManyToOne
     @JoinColumn(name = "username")
@@ -37,9 +42,10 @@ public class Item{
         this.price = price;
         this.quality = quality;
         this.user = user;
-        this.quantity+=1;
     }
 
     public Item() {
     }
+
+
 }

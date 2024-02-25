@@ -1,24 +1,9 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Account</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content=""/>
-    <meta name="keywords" content=""/>
-    <meta name="author" content=""/>
 
-    <!-- Facebook and Twitter integration -->
-    <meta property="og:title" content=""/>
-    <meta property="og:image" content=""/>
-    <meta property="og:url" content=""/>
-    <meta property="og:site_name" content=""/>
-    <meta property="og:description" content=""/>
-    <meta name="twitter:title" content=""/>
-    <meta name="twitter:image" content=""/>
-    <meta name="twitter:url" content=""/>
-    <meta name="twitter:card" content=""/>
+
+    <title th:text="${user.getUsername()}">User</title>
 
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     <link rel="shortcut icon" href="favicon.ico">
@@ -60,16 +45,12 @@
                 <div class="rounded-circle"
                      style="overflow: hidden; width: 150px; height: 150px; display: flex; align-items: center; justify-content: center;">
                     <img id="imageUpload" th:src="'data:image/jpeg;base64,' + ${image}" alt="Аватар"
-                         style="cursor: pointer; object-fit: cover; width: 100%; height: 100%;">
+                         style="cursor:pointer; object-fit: cover; width: 100%; height: 100%;">
                 </div>
                 <h1 id="colorlib-logo" style="text-align: center" th:text="${user.getUsername()}">Username</h1>
                 <span class="position" th:text="${user.getRoles().iterator().next()}">Role</span>
             </div>
 
-            <form id="imageUploadForm" style="display: none;" method="post" action="/trade/my/upload"
-                  enctype="multipart/form-data">
-                <input id="fileInput" type="file" name="file" accept="image/*" required>
-            </form>
 
             <div class="colorlib-footer">
                 <p><small>&copy; <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
@@ -83,44 +64,11 @@
             </div>
 
 
-            <script>
-                document.getElementById("imageUpload").onclick = function () {
-                    document.getElementById("fileInput").click();
-                };
 
-                document.getElementById("fileInput").onchange = function (event) {
-                    document.getElementById("imageUploadForm").submit();
-                };
-            </script>
+
         </aside>
 
         <div id="colorlib-main">
-            <form action="/trade/search" method="GET">
-                <label for="search">Пошук:</label>
-                <input type="text" id="search" name="query">
-                <button type="submit">Пошук</button>
-            </form>
-
-            <form th:action="@{/trade/my}" method="post">
-
-                <input type="text" id="name" name="name" placeholder="Name" maxlength="15" required>
-
-                <input type="number" id="price" name="price" placeholder="Price" max="9999999" required>
-
-                <label for="Quality">Quality</label>
-                <select id="Quality" name="quality">
-                    <option value="Destroyed">Destroyed</option>
-                    <option value="Bad">Bad</option>
-                    <option value="Mid">Mid</option>
-                    <option value="Good">Good</option>
-                    <option value="Perfect">Perfect</option>
-                </select>
-
-                <input type="text" id="description" name="description" placeholder="Description" maxlength="30">
-
-                <!-- Кнопка для відправки форми -->
-                <button type="submit">Add</button>
-            </form>
             <section class="colorlib-services" data-section="services">
                 <div class="colorlib-narrow-content">
                     <div class="row row-pt-md">
@@ -164,14 +112,13 @@
                                   data-speed="3000" data-refresh-interval="50"></span>
                             <span class="colorlib-counter-label">Items in the inventory</span>
                         </div>
-                        <div class="col-md-3 text-center animate-box">
+                        <div  class="col-md-3 text-center animate-box">
                             <span class="colorlib-counter js-counter" data-from="0" data-to="356" data-speed="3000"
                                   data-refresh-interval="50"></span>
                             <span class="colorlib-counter-label">Trades</span>
                         </div>
                         <div class="col-md-3 text-center animate-box">
-                            <span class="colorlib-counter js-counter" data-from="0" th:data-to="${user.getBalance()}"
-                                  data-speed="3000"
+                            <span class="colorlib-counter js-counter" data-from="0" th:data-to="${user.getBalance()}" data-speed="3000"
                                   data-refresh-interval="50"></span>
                             <span class="colorlib-counter-label">Balance</span>
                         </div>

@@ -2,9 +2,9 @@ package com.example.trade.model;
 
 
 import lombok.Data;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
+
 import java.util.Set;
 
 @Entity
@@ -24,7 +24,6 @@ public class User {
 
     @Lob
     private byte[] image;
-    //todo додавання функціоналу зміни аватару користувача
 
     @Column
     private boolean active;
@@ -41,4 +40,6 @@ public class User {
         this.password = password;
         this.email = email;
     }
+
+
 }
