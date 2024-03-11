@@ -1,6 +1,6 @@
 package com.example.trade.model;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 import lombok.Data;
 
