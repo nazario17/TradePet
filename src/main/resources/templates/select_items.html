@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>select</title>
+
+
+
+  <!-- Animate.css -->
+  <link rel="stylesheet" href="/css/animate.css">
+  <!-- Icomoon Icon Fonts-->
+  <link rel="stylesheet" href="/css/icomoon.css">
+  <!-- Bootstrap  -->
+  <link rel="stylesheet" href="/css/bootstrap.css">
+  <!-- Flexslider  -->
+  <!-- Owl Carousel -->
+  <link rel="stylesheet" href="/css/owl.theme.default.min.css">
+  <!-- Theme style  -->
+  <link rel="stylesheet" href="/css/style.css">
+
+
+</head>
+<body>
+
+<section class="colorlib-services" data-section="services">
+  <div class="colorlib-narrow-content">
+    <div class="row row-pt-md">
+      <form id="inventoryForm" method="post" th:action="@{/trade/my/select}">
+        <input type="hidden" name="offerId" th:value="${offerId}">
+        <input type="hidden" name="update" th:value="${update}">
+        <section class="colorlib-services" data-section="services">
+          <div class="colorlib-narrow-content">
+            <div class="row row-pt-md">
+              <!-- Розділити інвентар на групи по 5 елементів -->
+              <th:block th:each="i : ${#numbers.sequence(0, inventory.size() - 1, 6)}">
+                <div class="row">
+                  <!-- Ітерувати через кожну групу -->
+                  <th:block th:each="j : ${#numbers.sequence(i, ((i + 5) &lt; inventory.size() ? (i + 5) : inventory.size() - 1))}">
+                    <div class="col-md-2 text-center animate-box">
+                      <div class="services color-1">
+                                <span class="icon">
+                                    <i class="icon-bulb"></i>
+                                </span>
+                        <div class="desc">
+                          <h3 style="word-wrap: break-word;" th:text="${inventory[j].getName()}">Name</h3>
+                          <h4 style="word-wrap: break-word;" th:text="${inventory[j].getDescription()}">Description</h4>
+                          <h4 th:text="${inventory[j].getQuality()}">Quality</h4>
+                          <h4 th:text="${inventory[j].getPrice()}">Price</h4>
+                        </div>
+                        <!-- Чекбокс для кожного елемента animate-box -->
+                        <label th:for="'inventory_' + ${j}"></label>
+                        <input type="checkbox" th:id="'inventory_' + ${j}" th:name="'inventoryIds'" th:value="${inventory[j].getId()}">
+
+
+
+                      </div>
+                    </div>
+                  </th:block>
+                </div>
+              </th:block>
+            </div>
+          </div>
+          <!-- Кнопка для відправки -->
+          <button type="submit">Відправити</button>
+        </section>
+      </form>
+    </div>
+  </div>
+</section>
+
+
+</body>
+</html>

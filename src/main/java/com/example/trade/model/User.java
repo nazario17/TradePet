@@ -1,10 +1,8 @@
 package com.example.trade.model;
 
-
 import lombok.Data;
 
-import javax.persistence.*;
-
+import jakarta.persistence.*;
 import java.util.Set;
 
 @Entity
@@ -15,16 +13,13 @@ public class User {
     @Id
     @Column(nullable = false, unique = true)
     private String username;
-
     @Column(nullable = false)
     private String password;
-
     @Column(nullable = false)
     private String email;
-
     @Lob
+    @Column(name = "image", columnDefinition = "LONGBLOB")
     private byte[] image;
-
     @Column
     private boolean active;
 
@@ -33,13 +28,13 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Set<ROLE> roles;
 
-    public User() {}
-
+    public User() {
+    }
     public User(String username, String password, String email) {
         this.username = username;
         this.password = password;
         this.email = email;
     }
-
-
 }
+
+

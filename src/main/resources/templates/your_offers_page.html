@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Offers</title>
+</head>
+<body>
+<div class="post-wrap">
+    <span>Sent offers</span>
+    <div th:each="offer : ${sent_offers}" class="post-item">
+        <div class="post-item-wrap">
+            <h3 class="post-title" th:text="${offer.getId()}">ID</h3>
+            <h4 th:text="${offer.getStatus()}">Status</h4>
+            <span class="post-content" th:text="${offer.sender.getUsername()} +' items:'">Sender items</span>
+            <div th:each="senderItem : ${offer.sendersItems}">
+                <span th:text="'Name of the item: ' + ${senderItem.getName()}">Name</span>
+                <span th:text="'Description: ' + ${senderItem.getDescription()}">Description</span>
+                <span th:text="'Quality: ' + ${senderItem.getQuality()}">Quality</span>
+                <span th:text="'Price: ' + ${senderItem.getPrice()}">Price</span>
+            </div>
+            <span class="post-content" th:text="${offer.receiver.getUsername() + ' items:'}">Receiver items</span>
+            <div th:each="receiverItem : ${offer.receiversItems}">
+                <span th:text="'Name of the item: ' + ${receiverItem.getName()}">Name</span>
+                <span th:text="'Description: ' + ${receiverItem.getDescription()}">Description</span>
+                <span th:text="'Quality: ' + ${receiverItem.getQuality()}">Quality</span>
+                <span th:text="'Price: ' + ${receiverItem.getPrice()}">Price</span>
+            </div>
+        </div>
+        <button th:if="${offer.getStatus() == T(com.example.trade.model.STATUS).NEW or offer.getStatus() == T(com.example.trade.model.STATUS).UPDATED}" th:onclick="'javascript: window.location.href=\'/trade/my/offers/decline/' + ${offer.getId()} + '\''">Відхилити</button>
+        <hr>
+    </div>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <hr>
+    <span>Receive offers</span>
+    <div th:each="offer : ${receive_offers}" class="post-item">
+        <div class="post-item-wrap">
+            <h3 class="post-title" th:text="${offer.getId()}">ID</h3>
+            <h4 th:text="${offer.getStatus()}">Status</h4>
+            <span class="post-content" th:text="${offer.sender.getUsername()} +' items:'">Sender items</span>
+                <div th:each="senderItem : ${offer.sendersItems}">
+                    <span th:text="'Name of the item: ' + ${senderItem.getName()}">Name</span>
+                    <span th:text="'Description: ' + ${senderItem.getDescription()}">Description</span>
+                    <span th:text="'Quality: ' + ${senderItem.getQuality()}">Quality</span>
+                    <span th:text="'Price: ' + ${senderItem.getPrice()}">Price</span>
+                </div>
+            <span class="post-content" th:text="${offer.receiver.getUsername() + ' items:'}">Receiver items</span>
+                <div th:each="receiverItem : ${offer.receiversItems}">
+                    <span th:text="'Name of the item: ' + ${receiverItem.getName()}">Name</span>
+                    <span th:text="'Description: ' + ${receiverItem.getDescription()}">Description</span>
+                    <span th:text="'Quality: ' + ${receiverItem.getQuality()}">Quality</span>
+                    <span th:text="'Price: ' + ${receiverItem.getPrice()}">Price</span>
+                </div>
+        </div>
+        <button th:if="${offer.getStatus() == T(com.example.trade.model.STATUS).NEW or offer.getStatus() == T(com.example.trade.model.STATUS).UPDATED}" th:onclick="'javascript: window.location.href=\'/trade/my/offers/edit/' + ${offer.getId()} + '\''">Редагувати</button>
+        <button th:if="${offer.getStatus() == T(com.example.trade.model.STATUS).NEW or offer.getStatus() == T(com.example.trade.model.STATUS).UPDATED}" th:onclick="'javascript: window.location.href=\'/trade/my/offers/decline/' + ${offer.getId()} + '\''">Відхилити</button>
+        <button th:if="${offer.getStatus() == T(com.example.trade.model.STATUS).NEW or offer.getStatus() == T(com.example.trade.model.STATUS).UPDATED}" th:onclick="'javascript: window.location.href=\'/trade/my/offers/accept/' + ${offer.getId()} + '\''">Прийняти</button>
+        <hr>
+    </div>
+
+</div>
+</body>
+</html>

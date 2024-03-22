@@ -1,18 +1,12 @@
 package com.example.trade.repository;
 
-
 import com.example.trade.model.Item;
-import com.example.trade.model.User;
+import com.example.trade.model.Offer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
-public interface ItemRepository extends JpaRepository<Item, Long> {
+public interface OfferRepository extends JpaRepository<Offer, Long> {
 
-    List<Item> findAllByUser(User user);
-
-    Item findItemById(int id);
-
+    Offer getById(Long id);
 }

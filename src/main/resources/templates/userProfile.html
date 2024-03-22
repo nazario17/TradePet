@@ -5,9 +5,6 @@
 
     <title th:text="${user.getUsername()}">User</title>
 
-    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
-    <link rel="shortcut icon" href="favicon.ico">
-
     <link href="https://fonts.googleapis.com/css?family=Quicksand:300,400,500,700" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Playfair+Display:400,400i,700" rel="stylesheet">
 
@@ -64,41 +61,50 @@
             </div>
 
 
-
-
         </aside>
 
         <div id="colorlib-main">
             <section class="colorlib-services" data-section="services">
                 <div class="colorlib-narrow-content">
+                    <h3 th:text="${text}"></h3>
                     <div class="row row-pt-md">
-                        <!-- Розділити інвентар на групи по 3 елементи -->
-                        <th:block th:each="i : ${#numbers.sequence(0, inventory.size() - 1, 3)}">
-                            <div class="row">
-                                <!-- Ітерувати через кожну групу -->
-                                <th:block
-                                        th:each="j : ${#numbers.sequence(i, ((i + 2) &lt; inventory.size() ? (i + 2) : inventory.size() - 1))}">
-                                    <div class="col-md-4 text-center animate-box">
-                                        <div class="services color-1">
-                                <span class="icon">
-                                    <i class="icon-bulb"></i>
-                                </span>
-                                            <div class="desc">
-                                                <h3 style="word-wrap: break-word;" th:text="${inventory[j].getName()}">
-                                                    Name</h3>
-                                                <h4 style="word-wrap: break-word;"
-                                                    th:text="${inventory[j].getDescription()}">Description</h4>
-                                                <h4 th:text="${inventory[j].getQuality()}">Quality</h4>
-                                                <h4 th:text="${inventory[j].getPrice()}">Price</h4>
+                        <form id="inventoryForm" method="post"
+                              th:action="@{/trade/my/{username}(username=${user.getUsername()})}">
+                            <input type="hidden" name="offerId" th:value="${offerId}">
+                            <!-- Розділити інвентар на групи по 3 елементи -->
+                            <th:block th:each="i : ${#numbers.sequence(0, inventory.size() - 1, 3)}">
+                                <div class="row">
+                                    <!-- Ітерувати через кожну групу -->
+                                    <th:block
+                                            th:each="j : ${#numbers.sequence(i, ((i + 2) &lt; inventory.size() ? (i + 2) : inventory.size() - 1))}">
+                                        <div class="col-md-4 text-center animate-box">
+                                            <div class="services color-1">
+
+                                        <span class="icon">
+                                            <i class="icon-bulb"></i>
+                                        </span>
+                                                <div class="desc">
+                                                    <h3 style="word-wrap: break-word;"
+                                                        th:text="${inventory[j].getName()}">Name</h3>
+                                                    <h4 style="word-wrap: break-word;"
+                                                        th:text="${inventory[j].getDescription()}">Description</h4>
+                                                    <h4 th:text="${inventory[j].getQuality()}">Quality</h4>
+                                                    <h4 th:text="${inventory[j].getPrice()}">Price</h4>
+                                                </div>
+                                                <input type="checkbox" th:id="'inventory_' + ${j}"
+                                                       th:name="'inventoryIds'" th:value="${inventory[j].getId()}">
+                                                <label th:for="'inventory_' + ${j}"></label>
                                             </div>
                                         </div>
-                                    </div>
-                                </th:block>
-                            </div>
-                        </th:block>
+                                    </th:block>
+                                </div>
+                            </th:block>
+                            <button type="submit">Відправити</button>
+                        </form>
                     </div>
                 </div>
             </section>
+
 
             <div id="colorlib-counter" class="colorlib-counters" style="background-image: url(/images/cover_bg_1.jpg);"
                  data-stellar-background-ratio="0.5">
@@ -112,20 +118,16 @@
                                   data-speed="3000" data-refresh-interval="50"></span>
                             <span class="colorlib-counter-label">Items in the inventory</span>
                         </div>
-                        <div  class="col-md-3 text-center animate-box">
-                            <span class="colorlib-counter js-counter" data-from="0" data-to="356" data-speed="3000"
+                        <div class="col-md-3 text-center animate-box">
+                            <span class="colorlib-counter js-counter" data-from="0" th:data-to="${user.getTradeCount()}" data-speed="3000"
                                   data-refresh-interval="50"></span>
                             <span class="colorlib-counter-label">Trades</span>
                         </div>
                         <div class="col-md-3 text-center animate-box">
-                            <span class="colorlib-counter js-counter" data-from="0" th:data-to="${user.getBalance()}" data-speed="3000"
+                            <span class="colorlib-counter js-counter" data-from="0" th:data-to="${user.getBalance()}"
+                                  data-speed="3000"
                                   data-refresh-interval="50"></span>
                             <span class="colorlib-counter-label">Balance</span>
-                        </div>
-                        <div class="col-md-3 text-center animate-box">
-                            <span class="colorlib-counter js-counter" data-from="0" data-to="10" data-speed="3000"
-                                  data-refresh-interval="50"></span>
-                            <span class="colorlib-counter-label">Partners</span>
                         </div>
                     </div>
                 </div>

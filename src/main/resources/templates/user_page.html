@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -20,8 +20,6 @@
     <meta name="twitter:url" content=""/>
     <meta name="twitter:card" content=""/>
 
-    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
-    <link rel="shortcut icon" href="favicon.ico">
 
     <link href="https://fonts.googleapis.com/css?family=Quicksand:300,400,500,700" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Playfair+Display:400,400i,700" rel="stylesheet">
@@ -51,7 +49,6 @@
 <body>
 <div id="colorlib-page">
     <div class="container-wrap">
-
 
         <a href="#" class="js-colorlib-nav-toggle colorlib-nav-toggle" data-toggle="collapse" data-target="#navbar"
            aria-expanded="false" aria-controls="navbar"><i></i></a>
@@ -95,6 +92,7 @@
         </aside>
 
         <div id="colorlib-main">
+            <button onclick="window.location.href='/trade/my/offers'">Пропозиції</button>
             <form action="/trade/search" method="GET">
                 <label for="search">Пошук:</label>
                 <input type="text" id="search" name="query">
@@ -165,7 +163,7 @@
                             <span class="colorlib-counter-label">Items in the inventory</span>
                         </div>
                         <div class="col-md-3 text-center animate-box">
-                            <span class="colorlib-counter js-counter" data-from="0" data-to="356" data-speed="3000"
+                            <span class="colorlib-counter js-counter" data-from="0" th:data-to="${user.getTradeCount()}" data-speed="3000"
                                   data-refresh-interval="50"></span>
                             <span class="colorlib-counter-label">Trades</span>
                         </div>
@@ -174,11 +172,6 @@
                                   data-speed="3000"
                                   data-refresh-interval="50"></span>
                             <span class="colorlib-counter-label">Balance</span>
-                        </div>
-                        <div class="col-md-3 text-center animate-box">
-                            <span class="colorlib-counter js-counter" data-from="0" data-to="10" data-speed="3000"
-                                  data-refresh-interval="50"></span>
-                            <span class="colorlib-counter-label">Partners</span>
                         </div>
                     </div>
                 </div>
