@@ -1,12 +1,7 @@
 package com.example.trade.model;
 
-import lombok.Data;
-
 import jakarta.persistence.*;
-import org.springframework.beans.factory.annotation.Value;
-
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 

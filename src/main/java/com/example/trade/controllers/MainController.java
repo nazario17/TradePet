@@ -1,35 +1,22 @@
 package com.example.trade.controllers;
 
-
 import com.example.trade.model.*;
-import com.example.trade.repository.UserRepository;
 import com.example.trade.service.ItemService;
 import com.example.trade.service.MailService;
 import com.example.trade.service.OfferService;
 import com.example.trade.service.UserService;
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.security.Principal;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
 
 @Controller
 public class MainController {
@@ -45,7 +32,6 @@ public class MainController {
 
     @Autowired
     OfferService offerService;
-
 
     @GetMapping("/trade")
     public String index() {
@@ -70,7 +56,7 @@ public class MainController {
         return "redirect:/login";
     }
 
-    ///admin controllers
+    // /admin controllers
     @GetMapping("/trade/admin")
     public String admin() {
         return "admin";
@@ -82,30 +68,25 @@ public class MainController {
         return "users";
     }
 
-
-    @GetMapping("trade/admin/{username}")
-    public String newAdmin(@PathVariable String username) {
-        AuthorizedUser user = (AuthorizedUser) userService.getByName(username);
-        Admin admin = new Admin(
-                user.getUsername(),
-                user.getPassword(),
-                user.getEmail(),
-                user.getBalance());
-        admin.setActive(true);
-        admin.setRoles(user.getRoles());
-        admin.setItems(user.getItems());
-        userService.save(admin);
+    @PostMapping("trade/admin/{username}")
+    public String newAdmin(@PathVariable String username, @RequestParam String action) {
+        AuthorizedUser user = userService.getByName(username);
+        if (action.equals("makeAdmin")) {
+            userService.addRole(ROLE.ADMIN, user);
+        } else {
+            userService.banUser(user);
+        }
         return "redirect:/trade/admin/users";
     }
 
-//////////////////////////////////////////////////////////
-///////user controllers//////////////////////
 
+// /user controllers
     @GetMapping("/trade/my")
     public String userPage(Principal principal, Model model) {
-        User user = userService.getByName(principal.getName());
+        AuthorizedUser user = userService.getByName(principal.getName());
         List<Item> inventory = itemService.getByUser(user);
-        model.addAttribute("user", (AuthorizedUser) user);
+        userService.calcBalance(user);
+        model.addAttribute("user", user);
         model.addAttribute("image", userService.getUserImage(user));
         model.addAttribute("inventory", inventory);
         return "user_page";
@@ -117,11 +98,9 @@ public class MainController {
                                      @RequestParam String quality,
                                      @RequestParam String description,
                                      Principal principal) {
-        AuthorizedUser authorizedUser =
-                (AuthorizedUser) userService.getByName(principal.getName());
+        AuthorizedUser authorizedUser = userService.getByName(principal.getName());
         itemService.save(name, description, price, quality,
                 authorizedUser);
-        userService.calcBalance(authorizedUser);
         return "redirect:/trade/my";
     }
 
@@ -139,10 +118,7 @@ public class MainController {
 
         if (!principal.getName().equals(username)) {
             User user = userService.getByName(username.trim());
-            //todo Як ці 3 їбучі рядки фіксять проблему оновлення сторінки /trade/my/{username}????????
-            if (user == null) {
-                return "redirect:/trade/my";
-            }
+
             if (text != null && !text.isEmpty()) {
                 model.addAttribute("text", text);
                 model.addAttribute("offerId", offerId);
@@ -150,7 +126,7 @@ public class MainController {
             String image = userService.getUserImage(user);
             List<Item> inventory = itemService.getByUser(user);
             model.addAttribute("inventory", inventory);
-            model.addAttribute("user", (AuthorizedUser) user);
+            model.addAttribute("user", user);
             model.addAttribute("image", image);
             return "userProfile";
         } else return "redirect:/trade/my";
@@ -161,10 +137,10 @@ public class MainController {
     public String postTrade(@PathVariable String username,
                             @RequestParam(name = "offerId", required = false) Long offerId,
                             @RequestParam(value = "inventoryIds", required = false) String[] inventoryIds,
-                            Principal principal, Model model) {
+                            Principal principal) {
         if (offerId == null) {
-            AuthorizedUser receiver = (AuthorizedUser) userService.getByName(username);
-            AuthorizedUser sender = (AuthorizedUser) userService.getByName(principal.getName());
+            AuthorizedUser receiver = userService.getByName(username);
+            AuthorizedUser sender = userService.getByName(principal.getName());
             Offer offer = offerService.createNewOffer(inventoryIds, sender, receiver);
             offerService.save(offer, sender, receiver);
             String content = "<p>Hello,</p>"
@@ -172,56 +148,54 @@ public class MainController {
                     + "<p>Please, check this out";
             String from = "vowa.legun@gmail.com";
             String to = receiver.getEmail();
-            mailService.createAndSendMimeMessage(content, from, to);
-            //todo класи для роботи з урлами
-            return "redirect:/trade/my/select?offerId=" + offer.getId() + "&update=false";
+            mailService.createAndSendMimeMessageAsync(content, from, to);
+            return "redirect:/trade/my/select?offerId=" + offer.getId() + "&update=false&url=c";
         } else {
             Offer offer = offerService.getById(offerId);
             offer.setSendersItems(itemService.getItemsById(inventoryIds));
             offerService.save(offer);
-            return "redirect:/trade/my/select?offerId=" + offer.getId() + "&update=true";
+            return "redirect:/trade/my/select?offerId=" + offer.getId() + "&update=true&url=c";
         }
 
 
     }
 
-
     @GetMapping("trade/my/select")
     public String selectItems(@RequestParam(name = "offerId", required = false) Long offerId,
                               @RequestParam(name = "update", required = false) boolean update,
+                              @RequestParam(name = "url", required = false) String url,
                               Principal principal, Model model) {
-        AuthorizedUser user = (AuthorizedUser) userService.getByName(principal.getName());
-        List<Item> inventory = itemService.getByUser(user);
-        model.addAttribute("user", user);
-        model.addAttribute("inventory", inventory);
-        model.addAttribute("offerId", offerId);
-        model.addAttribute("update", update);
-        return "select_items";
+        if (url.equals("c")) {
+            AuthorizedUser user = userService.getByName(principal.getName());
+            List<Item> inventory = itemService.getByUser(user);
+            model.addAttribute("user", user);
+            model.addAttribute("inventory", inventory);
+            model.addAttribute("offerId", offerId);
+            model.addAttribute("update", update);
+            return "select_items";
+        } else return "user_page";
     }
 
-    //todo класи для роботи з урлами
     @PostMapping("trade/my/select")
     public String selectItemsForm(@RequestParam("offerId") Long offerId,
                                   @RequestParam(value = "inventoryIds", required = false) String[] inventoryIds,
-                                  @RequestParam("update") boolean update,
-                                  Principal principal, Model model) {
+                                  @RequestParam("update") boolean update) {
 
-//todo класи для роботи з урлами
         if (update) {
             Offer offer = offerService.getById(offerId);
             offerService.setReceiversItemsById(offerId, inventoryIds);
             offer.setStatus(STATUS.UPDATED);
             AuthorizedUser user = (AuthorizedUser) offer.getReceiver();
-            offer.setReceiver(offer.getSender());
-            offer.setSender(user);
-            offer.setUpdatedAt(LocalDateTime.now());
+            offerService.setReceiver(offer.getSender(), offer);
+            offerService.setSender(user, offer);
+            offerService.setUpdatedAt(LocalDateTime.now(), offer);
             offerService.save(offer);
             String content = "<p>Hello,</p>"
                     + "<p>Your trade request has been updated</p>"
                     + "<p>Please, check this out";
             String from = "vowa.legun@gmail.com";
             String to = offer.getSender().getEmail();
-            mailService.createAndSendMimeMessage(content, from, to);
+            mailService.createAndSendMimeMessageAsync(content, from, to);
         } else {
             offerService.setSendersItemsById(offerId, inventoryIds);
         }
@@ -231,35 +205,31 @@ public class MainController {
 
     @GetMapping("trade/my/offers")
     public String offers(Model model, Principal principal) {
-        AuthorizedUser user = (AuthorizedUser) userService.getByName(principal.getName());
+        AuthorizedUser user = userService.getByName(principal.getName());
         model.addAttribute("sent_offers", offerService.sort(user.getSentOffers()));
         model.addAttribute("receive_offers", offerService.sort(user.getReceivedOffers()));
-        model.addAttribute("status", STATUS.values());
 
         return "your_offers_page";
     }
 
-    //todo change to PostMethod
     @GetMapping("trade/my/offers/edit/{offerId}")
     public String editOffer(@PathVariable Long offerId, Principal principal) {
         Offer offer = offerService.getById(offerId);
-        System.out.println(1);
-        offer.setStatus(STATUS.CANCELLED);
-        System.out.println(2);
+        offerService.setStatus(STATUS.CANCELLED, offer);
         offerService.save(offer);
         if (principal.getName().equals(offer.getSender().getUsername())) {
             return "redirect:/trade/my/" + offer.getReceiver().getUsername() +
                     "?offerId=" + offerId + "&text=choose items you want to get";
         } else {
             return "redirect:/trade/my/" + offer.getSender().getUsername() +
-                    "?offerId=" + offerId + "&text=c    hoose items you want to get";
+                    "?offerId=" + offerId + "&text=choose items you want to get";
         }
     }
 
     @GetMapping("/trade/my/offers/decline/{offerId}")
     public String declineOffer(@PathVariable Long offerId) {
         Offer offer = offerService.getById(offerId);
-        offer.setStatus(STATUS.DECLINED);
+        offerService.setStatus(STATUS.DECLINED, offer);
         offerService.save(offer);
         return "redirect:/trade/my/offers";
     }
@@ -273,9 +243,9 @@ public class MainController {
 
     @PostMapping("/trade/my/upload")
     public String uploadFile(@RequestParam("file") MultipartFile file, Principal principal) {
-        AuthorizedUser user = (AuthorizedUser) userService.getByName(principal.getName());
+        AuthorizedUser user = userService.getByName(principal.getName());
         try {
-            user.setImage(file.getBytes());
+            userService.setImage(file.getBytes(), user);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -283,30 +253,5 @@ public class MainController {
         return "redirect:/trade/my";
     }
 
-
-///////////////////////////////////////////////////////////
-
-    //todo delete at the end
-    @GetMapping("/info")
-    public String info(Model model, Principal principal) {
-        User user = userService.getByName(principal.getName());
-        model.addAttribute("role", user.getRoles());
-        model.addAttribute("name", user.getUsername());
-        return "info";
-    }
-
-    //todo delete at the end too
-    @GetMapping("/init")
-    public String init() {
-        AuthorizedUser user = (AuthorizedUser) userService.getByName("a");
-        Set<ROLE> roles = new HashSet<>();
-        roles.add(ROLE.ADMIN);
-        user.setRoles(roles);
-        userService.save(user);
-        return "redirect:/trade";
-    }
-
-
 }
 
-//TODO COMMIT

@@ -4,10 +4,10 @@ import com.example.trade.model.*;
 import com.example.trade.repository.ItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Service
 public class ItemService {
@@ -43,7 +43,6 @@ public class ItemService {
         Set<Item> currentOfferItems = new HashSet<>(currentOffer.getSendersItems());
         currentOfferItems.addAll(currentOffer.getReceiversItems());
 
-        //fixed
         for (Offer offer : user.getReceivedOffers()) {
             if (!offer.equals(currentOffer)) {
                 Set<Item> offerItems = new HashSet<>(offer.getSendersItems());

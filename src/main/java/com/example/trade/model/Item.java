@@ -1,9 +1,7 @@
 package com.example.trade.model;
 
 import jakarta.persistence.*;
-
 import lombok.Data;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,9 +23,8 @@ public class Item {
     @Column
     private Long price;
 
-    //todo replace with enum
     @Column
-    private String quality;
+    private QUALITY quality;
 
     @ManyToMany(mappedBy = "sendersItems")
     private Set<Offer> sendInOffers = new HashSet<>();
@@ -35,12 +32,6 @@ public class Item {
 
     @ManyToMany(mappedBy = "receiversItems")
     private Set<Offer> receivedInOffers = new HashSet<>();
-
-    //todo maybe...
-/*
-    @Column
-    private Long quantity = 0L;
-*/
 
 
     @ManyToOne
@@ -52,7 +43,7 @@ public class Item {
         this.name = name;
         this.description = description;
         this.price = price;
-        this.quality = quality;
+        this.quality = QUALITY.valueOf(quality);
         this.user = user;
     }
 

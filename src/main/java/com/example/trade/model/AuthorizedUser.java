@@ -1,9 +1,11 @@
 package com.example.trade.model;
 
 
-import jakarta.persistence.*;
-
-import lombok.Data;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -24,6 +26,8 @@ public class AuthorizedUser extends User {
 
 
     private Long tradeCount = 0L;
+
+    private LocalDateTime banTime;
 
     public AuthorizedUser(String username, String password, String email, Long balance) {
         super(username, password, email);
@@ -75,6 +79,13 @@ public class AuthorizedUser extends User {
         this.tradeCount = tradeCount;
     }
 
+    public LocalDateTime getBanTime() {
+        return banTime;
+    }
+
+    public void setBanTime(LocalDateTime banTime) {
+        this.banTime = banTime;
+    }
 
     public void addItem(Item item) {
         if (this.items == null) {
@@ -88,4 +99,6 @@ public class AuthorizedUser extends User {
             this.items.remove(item);
         }
     }
+
+
 }

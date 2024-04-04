@@ -12,12 +12,18 @@
                 <h3 class="username" th:text="${user.getUsername()}">Username</h3>
                 <h3 class="email" th:text="${user.getEmail()}">Email</h3>
                 <h3 class="balance" th:text="${user.getBalance()}">Balance</h3>
-                <a th:href="${user.getUsername()}">
-                    <button type="button" class="btn btn-danger">Make user an admin</button>
-                </a>
-
             </div>
-            <hr>
+            <div>
+                <form th:action="@{/trade/admin/{username}(username=${user.getUsername()}, action='makeAdmin')}" method="post">
+                    <input type="hidden" name="username" th:value="${user.getUsername()}"/>
+                    <button type="submit" class="btn btn-danger">Make user an admin</button>
+                </form>
+                <form th:action="@{/trade/admin/{username}(username=${user.getUsername()}, action='banUser')}" method="post">
+                    <input type="hidden" name="username" th:value="${user.getUsername()}"/>
+                    <button type="submit" class="btn btn-danger">Ban user</button>
+                </form>
+            </div>
+
         </tr>
     </table>
 </div>

@@ -1,16 +1,16 @@
 package com.example.trade.service;
 
 import com.example.trade.model.*;
-import com.example.trade.repository.ItemRepository;
 import com.example.trade.repository.OfferRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Comparator;
+import java.util.Set;
+import java.util.TreeSet;
 
-
-import static com.example.trade.model.STATUS.*;
+import static com.example.trade.model.STATUS.ACCEPTED;
+import static com.example.trade.model.STATUS.DECLINED;
 
 @Service
 public class OfferService {
@@ -40,6 +40,7 @@ public class OfferService {
         Offer offer = getById(id);
         offer.setSendersItems(itemService.getItemsById(sendersItems));
         offerRepository.save(offer);
+
     }
 
     public void setReceiversItemsById(Long id, String[] sendersItems) {
@@ -49,7 +50,6 @@ public class OfferService {
     }
 
 
-    //todo accept logic
     public void acceptOffer(Long offerId) {
         Offer offer = getById(offerId);
         AuthorizedUser sender = (AuthorizedUser) offer.getSender();
@@ -72,8 +72,7 @@ public class OfferService {
             userService.save(receiver);
 
             offer.setStatus(ACCEPTED);
-        }
-        else {
+        } else {
             offer.setStatus(DECLINED);
         }
         save(offer);
@@ -81,18 +80,13 @@ public class OfferService {
 
     public Set<Offer> sort(Set<Offer> offers) {
         Set<Offer> sortedOffers = new TreeSet<>(Comparator.comparingInt((Offer o) -> {
-            switch (o.getStatus()) {
-                case NEW:
-                    return 1;
-                case UPDATED:
-                    return 2;
-                case ACCEPTED:
-                    return 3;
-                case DECLINED:
-                    return 4;
-                default:
-                    return 0; // Якщо потрібно додати додаткові статуси
-            }
+            return switch (o.getStatus()) {
+                case NEW -> 1;
+                case UPDATED -> 2;
+                case ACCEPTED -> 3;
+                case DECLINED -> 4;
+                default -> 0;
+            };
         }).thenComparing(Offer::getId));
 
         sortedOffers.addAll(offers);
@@ -110,7 +104,21 @@ public class OfferService {
     public void save(Offer offer) {
         offerRepository.save(offer);
     }
+
+
+    public void setSender(AuthorizedUser user, Offer offer) {
+        offer.setSender(user);
+    }
+
+    public void setReceiver(User user, Offer offer) {
+        offer.setReceiver(user);
+    }
+
+    public void setUpdatedAt(LocalDateTime time, Offer offer) {
+        offer.setUpdatedAt(time);
+    }
+
+    public void setStatus(STATUS status, Offer offer) {
+        offer.setStatus(status);
+    }
 }
-
-
-//todo decline && accept offer functional
