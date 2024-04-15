@@ -42,6 +42,7 @@ public class SecurityConfig {
         return http.authorizeRequests(authorizeRequests ->
                         authorizeRequests
                                 .requestMatchers("/trade/admin/**").hasAuthority("ADMIN")
+                                .requestMatchers("/trade/my/**").hasAnyAuthority("USER","ADMIN")
                                 .requestMatchers("/trade/**").hasAnyAuthority("USER","ADMIN")
                                 .requestMatchers("/login").anonymous()
                                 .requestMatchers("/signup").anonymous()

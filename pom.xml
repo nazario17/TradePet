@@ -150,6 +150,9 @@
 				<version>3.1.2</version>
 			</plugin>
 		</plugins>
+		<finalName>trade-0.0.1-SNAPSHOT</finalName>
 	</build>
+
+
 
 </project>
